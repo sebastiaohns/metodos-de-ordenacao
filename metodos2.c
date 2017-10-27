@@ -9,7 +9,6 @@ typedef struct Palavra
     int rpt;
 }palavra;
 
-
 void insertionSort(palavra *vet, int tam)
 {
     int i, j;
@@ -19,7 +18,7 @@ void insertionSort(palavra *vet, int tam)
     {
         aux = vet[i];
 
-        for(j=i-1; (j>=0) && strcmp(aux.str, vet[j].str) < 0; j--)
+        for(j=i-1; (j>=0) && (aux.rpt < vet[j].rpt); j--)
         {
             vet[j+1] = vet[j];
         }
@@ -39,10 +38,10 @@ void selectionSort(palavra *vet, int tam)
 
         for(j=(i+1); j<tam; j++)
         {
-            if(strcmp(vet[j].str, vet[min].str) < 0)
+            if(vet[j].rpt < vet[min].rpt)
                 min = j;
         }
-        if(strcmp(vet[i].str, vet[min].str) != 0)
+        if(vet[i].rpt != vet[min].rpt)
         {
             aux = vet[i];
             vet[i] = vet[min];
@@ -53,7 +52,7 @@ void selectionSort(palavra *vet, int tam)
 
 void shellSort(palavra *vet, int tam)
 {
-    int i, j, gap = 1;
+    int i , j, gap = 1;
     palavra aux;
 
     while(gap < tam)
@@ -63,14 +62,14 @@ void shellSort(palavra *vet, int tam)
 
     while(gap > 1)
     {
-        gap = gap/3;
+        gap = gap / 3;
 
         for(i=gap; i<tam; i++)
         {
             aux = vet[i];
             j = i - gap;
 
-            while(j >= 0 && strcmp(aux.str, vet[j].str) < 0)
+            while(j >= 0 && (aux.rpt < vet[j].rpt))
             {
                 vet[j+gap] = vet[j];
                 j = j - gap;
@@ -91,11 +90,11 @@ void quickSort(palavra *vet, int esq, int dir) {
 
     while(i <= j)
     {
-        while((strcmp(vet[i].str, aux.str) < 0) && i < dir)
+        while(vet[i].rpt < aux.rpt && i < dir)
         {
             i++;
         }
-        while((strcmp(vet[j].str, aux.str) > 0) && j > esq)
+        while(vet[j].rpt > aux.rpt && j > esq)
         {
             j--;
         }
@@ -144,9 +143,9 @@ void heapSort(palavra *vet, int tam)
 
         while(filho < tam)
         {
-            if((filho + 1 < tam)  &&  strcmp(vet[filho + 1].str, vet[filho].str) > 0)
+            if((filho + 1 < tam)  &&  (vet[filho + 1].rpt > vet[filho].rpt))
                 filho++;
-            if(strcmp(vet[filho].str, aux.str) > 0)
+            if(vet[filho].rpt > aux.rpt)
             {
                 vet[pai] = vet[filho];
                 pai = filho;
@@ -169,7 +168,7 @@ void merge(palavra *vet, int comeco, int meio, int fim)
 
     while(com1<=meio && com2<=fim)
     {
-        if(strcmp(vet[com1].str, vet[com2].str) <= 0){
+        if(vet[com1].rpt <= vet[com2].rpt){
             vetAux[comAux] = vet[com1];
             com1++;
         }
@@ -210,5 +209,41 @@ void mergeSort(palavra *vet, int comeco, int fim)
         mergeSort(vet, comeco, meio);
         mergeSort(vet, meio+1, fim);
         merge(vet, comeco, meio, fim);
+    }
+}
+
+void countingSort(palavra *vet, int tam)
+{
+    int i, max=0, num=0, curr=0;
+    int *counting_vet;
+
+    for(i=0; i<tam; i++)
+    {
+        if(vet[i].rpt > max)
+        {
+            max = vet[i].rpt;
+        }
+    }
+
+    counting_vet = calloc(max, sizeof(int));
+
+    for(i=0; i<tam; i ++)
+    {
+        counting_vet[vet[i].rpt]++;
+    }
+
+    while(curr <= tam)
+    {
+        while(counting_vet[num] > 0)
+        {
+            vet[curr].rpt = num;
+            counting_vet[num]--;
+            curr++;
+            if(curr > tam)
+            {
+                break;
+            }
+        }
+        num++;
     }
 }
